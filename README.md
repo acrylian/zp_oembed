@@ -13,7 +13,9 @@ Vimeo, Yfrog and Youtube.
 
 Usage:
 --------
-Enter the macro within any supported content field like this and add the url of the service to use (here: Youtube):
+Place file and folder with your `/plugins` folder and enable the plugin
+
+Enter the content macro within any supported content field like this and add the url of the service to use (here: Youtube):
 
 `[EMBED http://www.youtube.com/watch?v=F3TP7LZ8a2w]`
 
