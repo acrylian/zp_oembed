@@ -32,7 +32,7 @@ $option_interface = 'zpoembed';
 
 zp_register_filter('content_macro','zpoembed::macro');
 
-require_once(SERVERPATH.'/'.USER_PLUGIN_FOLDER.'/oembed/bootstrap.php');
+require_once(SERVERPATH.'/'.USER_PLUGIN_FOLDER.'/zp_oembed/bootstrap.php');
 global $essence;
 /* Tried to do this within the class constructor to avoid the global
 but got errors probably because of the namespaces */
