@@ -1,13 +1,15 @@
 zp_oembed
 =========
 
-A plugin to embed content from various services via oEmbed using a content macro.
+A plugin to embed content from various services via oEmbed using a content macro. 
+An adaption of Felix Girault's OEmbed libary Essence: https://github.com/felixgirault/essence
+
 Support for the following providers: 23hq, Bandcamp, Blip.tv, Cacoo, CanalPlus, Chirb.it, Clikthrough, CollegeHumour, 
 Dailymotion, Deviantart, Dipity, Flickr, Funnyordie, Howcast, Huffduffer, Hulu, Ifixit, Imgur, Instagram, Mobypicture, 
 Official.fm, Polldaddy, Qik, Revision3, Scribd, Shoudio, Sketchfab, Slideshare, SoundCloud, Ted, Twitter, Vhx, Viddler, 
 Vimeo, Yfrog and Youtube.
 
-An adaption of Felix Girault's OEmbed libary Essence: https://github.com/felixgirault/essence
+
 
 Usage:
 --------
