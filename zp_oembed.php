@@ -44,7 +44,7 @@ class zpoembed {
 	 */
 	function __construct() {
 		setOptionDefault('zpoembed_maxwidth',640);
-		setOptionDefault('zpoembed_maxwidth',480);
+		setOptionDefault('zpoembed_maxheight',480);
 	}
 	
 	function getOptionsSupported() {
