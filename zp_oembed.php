@@ -1,6 +1,6 @@
 <?php
 /**
- * A plugin to embed content from various services via oEmbed using a content macro. Requires Zenphoto 1.4.5
+ * A plugin to embed content from various services via oEmbed using a content macro.
  * An adaption of Felix Girault's OEmbed libary Essence: https://github.com/felixgirault/essence
  *
  * Support for the following providers: 23hq, Bandcamp, Blip.tv, Cacoo, CanalPlus, Chirb.it, Clikthrough, CollegeHumour, 
@@ -27,7 +27,7 @@
 $plugin_is_filter = 9|THEME_PLUGIN|ADMIN_PLUGIN;
 $plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed.');
 $plugin_author = 'Malte Müller (acrylian)';
-$plugin_version = '1.0';
+$plugin_version = '1.4.5';
 $option_interface = 'zpoembed';
 
 zp_register_filter('content_macro','zpoembed::macro');
@@ -44,7 +44,7 @@ class zpoembed {
 	 */
 	function __construct() {
 		setOptionDefault('zpoembed_maxwidth',640);
-		setOptionDefault('zpoembed_maxheight',480);
+		setOptionDefault('zpoembed_maxwidth',480);
 	}
 	
 	function getOptionsSupported() {
@@ -62,7 +62,7 @@ class zpoembed {
 	static function macro($macros) {
 		$macros['EMBED'] = array(
 				'class'=>'expression',
-				'regex'=>'/^(.*)$/',
+				'params'=> array('string'),
 				'value'=>'zpoembed::getEmbedHTML($1);',
 				'owner'=>'oembed',
 				'desc'=>gettext('Pass the url of the service to embed the content.')
