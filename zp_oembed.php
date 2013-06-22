@@ -23,6 +23,7 @@
  * @author Malte Müller (acrylian)
  *
  * @package plugins
+ * @subpackage misc
  */
 $plugin_is_filter = 9|THEME_PLUGIN|ADMIN_PLUGIN;
 $plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed.');
