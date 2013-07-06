@@ -62,9 +62,9 @@ class zpoembed {
 	
 	static function macro($macros) {
 		$macros['EMBED'] = array(
-				'class'=>'expression',
+				'class'=>'function',
 				'params'=> array('string'),
-				'value'=>'zpoembed::getEmbedHTML($1);',
+				'value'=>'zpoembed::getEmbedHTML',
 				'owner'=>'oembed',
 				'desc'=>gettext('Pass the url of the service to embed the content.')
 				);
