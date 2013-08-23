@@ -9,7 +9,7 @@ Dailymotion, Deviantart, Dipity, Flickr, Funnyordie, Howcast, Huffduffer, Hulu, 
 Official.fm, Polldaddy, Qik, Revision3, Scribd, Shoudio, Sketchfab, Slideshare, SoundCloud, Ted, Twitter, Vhx, Viddler, 
 Vimeo, Yfrog and Youtube.
 
-**Requires Zenphoto 1.4.5!**
+**PHP 5.3+ required**
 
 Usage:
 --------

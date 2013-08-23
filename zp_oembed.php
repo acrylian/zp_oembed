@@ -26,9 +26,10 @@
  * @subpackage misc
  */
 $plugin_is_filter = 9|THEME_PLUGIN|ADMIN_PLUGIN;
-$plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed.');
+$plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed. PHP 5.3+ required.');
 $plugin_author = 'Malte Müller (acrylian)';
 $plugin_version = '1.4.5';
+$plugin_disable = (version_compare(PHP_VERSION, '5.3') >= 0) ? false : gettext('zp_oembed requires PHP 5.3 or greater.');
 $option_interface = 'zpoembed';
 
 zp_register_filter('content_macro','zpoembed::macro');
@@ -37,7 +38,7 @@ require_once(SERVERPATH.'/'.USER_PLUGIN_FOLDER.'/zp_oembed/bootstrap.php');
 global $essence;
 /* Tried to do this within the class constructor to avoid the global
 but got errors probably because of the namespaces */
-$essence =  new fg\Essence\Essence(); 
+$essence =  new Essence\Essence::instance(); 
 
 class zpoembed {
 	/**
@@ -90,7 +91,9 @@ class zpoembed {
 	
 	static function getReplaceEmbeds($text) {
 		global $essence;
-		$replace = $essence->replace($text,'<div class="zpoembed">%html%</div>');
+		$replace = $essence->replace($text, function($Media) {
+			return '<div class="zpoembed">'.$Media->title.'</div>';
+		});
 		if($replace) {
 			return $replace;
 		}
