@@ -38,7 +38,7 @@ require_once(SERVERPATH.'/'.USER_PLUGIN_FOLDER.'/zp_oembed/bootstrap.php');
 global $essence;
 /* Tried to do this within the class constructor to avoid the global
 but got errors probably because of the namespaces */
-$essence =  new Essence\Essence::instance(); 
+$essence =  Essence\Essence::instance(); 
 
 class zpoembed {
 	/**
@@ -50,7 +50,8 @@ class zpoembed {
 	}
 	
 	function getOptionsSupported() {
-				$options = array(
+				$options = array(); 
+				array(
 							gettext('Maxwidth of the embed') => array('key' => 'zpoembed_maxwidth', 'type' => OPTION_TYPE_TEXTBOX,
 										'order' => 0,
 										'desc' => NULL),
