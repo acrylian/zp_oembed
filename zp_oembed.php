@@ -50,8 +50,7 @@ class zpoembed {
 	}
 	
 	function getOptionsSupported() {
-				$options = array(); 
-				array(
+				$options = array(
 							gettext('Maxwidth of the embed') => array('key' => 'zpoembed_maxwidth', 'type' => OPTION_TYPE_TEXTBOX,
 										'order' => 0,
 										'desc' => NULL),
