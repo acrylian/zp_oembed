@@ -7,14 +7,12 @@
 
 namespace Essence;
 
-use Essence\Cache\Engine;
-
 
 
 /**
  *	Allows an object to cache method calls.
  *
- *	@package fg.Essence
+ *	@package Essence
  */
 
 trait Cacheable {
@@ -32,7 +30,6 @@ trait Cacheable {
 	/**
 	 *	Returns the cached result of a method call.
 	 *
-	 *	@param Essence\Cache\Engine $Engine Cache engine.
 	 *	@param string $method The method to cache.
 	 *	@param ... mixed Parameters to be passed to the method.
 	 *	@return mixed Cached result.

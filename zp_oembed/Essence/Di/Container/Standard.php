@@ -12,6 +12,8 @@ use Essence\Di\Container;
 use Essence\Cache\Engine\Volatile as VolatileCacheEngine;
 use Essence\Dom\Parser\Native as NativeDomParser;
 use Essence\Http\Client\Curl as CurlHttpClient;
+use Essence\Http\Client\Native as NativeHttpClient;
+use Essence\Log\Logger\Null as NullLogger;
 use Essence\Provider\Collection;
 use Essence\Provider\OEmbed;
 use Essence\Provider\OpenGraph;
@@ -21,7 +23,7 @@ use Essence\Provider\OpenGraph;
 /**
  *	Contains the default injection properties.
  *
- *	@package fg.Essence.Di.Container
+ *	@package Essence.Di.Container
  */
 
 class Standard extends Container {
@@ -34,7 +36,7 @@ class Standard extends Container {
 
 		$this->_properties = array(
 
-			// providers are loaded from the default config file
+			// Providers are loaded from the default config file
 			'providers' => ESSENCE_DEFAULT_PROVIDERS,
 
 			// A volatile cache engine is shared across the application
@@ -43,8 +45,11 @@ class Standard extends Container {
 			}),
 
 			// A cURL HTTP client is shared across the application
+			// If cURL isn't available, a native client is used
 			'Http' => Container::unique( function( ) {
-				return new CurlHttpClient( );
+				return function_exists( 'curl_init' )
+					? new CurlHttpClient( )
+					: new NativeHttpClient( );
 			}),
 
 			// A native DOM parser is shared across the application
@@ -53,7 +58,9 @@ class Standard extends Container {
 			}),
 
 			// A null logger is shared across the application
-			'Log' => null,
+			'Log' => Container::unique( function( ) {
+				return new NullLogger( );
+			}),
 
 			// The OEmbed provider uses the shared HTTP client, DOM parser
 			// and logger.

@@ -15,13 +15,14 @@ use Essence\Dom\Parser as DomParser;
 use Essence\Http\Client as HttpClient;
 use Essence\Log\Logger;
 use Essence\Provider\Collection;
+use Essence\Exception;
 
 
 
 /**
  *	Gathers embed informations from URLs.
  *
- *	@package fg.Essence
+ *	@package Essence
  */
 
 class Essence {
@@ -67,7 +68,7 @@ class Essence {
 	 *	@var Essence\Log\Logger
 	 */
 
-	protected $_Log = null;
+	protected $_Logger = null;
 
 
 
@@ -85,9 +86,10 @@ class Essence {
 		// http://daringfireball.net/2010/07/improved_regex_for_matching_urls
 		'urlPattern' =>
 			'#
-				(?<!=["\'])
 				(?<url>
-					(?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)
+					(?<!=["\'])
+					(?:https?:)//
+					(?:www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)?
 					(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+
 					(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'"\.,<>?«»“”‘’])
 				)
@@ -103,7 +105,7 @@ class Essence {
 	 *	@param Essence\Cache\Engine $Cache Cache engine.
 	 *	@param Essence\Http\Client $Http HTTP client.
 	 *	@param Essence\Dom\Parser $Cache DOM parser.
-	 *	@param Essence\Log\Logger $Log Logger.
+	 *	@param Essence\Log\Logger $Logger Logger.
 	 */
 
 	public function __construct(
@@ -111,13 +113,13 @@ class Essence {
 		CacheEngine $Cache,
 		HttpClient $Http,
 		DomParser $Dom,
-		Logger $Log = null
+		Logger $Logger
 	) {
 		$this->_Collection = $Collection;
 		$this->_Cache = $Cache;
 		$this->_Http = $Http;
 		$this->_Dom = $Dom;
-		$this->_Log = $Log;
+		$this->_Logger = $Logger;
 	}
 
 
@@ -167,15 +169,13 @@ class Essence {
 			try {
 				$source = $this->_Http->get( $source );
 			} catch ( Exception $Exception ) {
-				if ( $this->_Log ) {
-					$this->_Log->log(
-						Logger::notice,
-						"Unable to fetch $source",
-						array(
-							'exception' => $Exception
-						)
-					);
-				}
+				$this->_Logger->log(
+					Logger::notice,
+					"Unable to fetch $source",
+					array(
+						'exception' => $Exception
+					)
+				);
 
 				return array( );
 			}
@@ -213,16 +213,14 @@ class Essence {
 		try {
 			$attributes = $this->_Dom->extractAttributes( $html, $options );
 		} catch ( Exception $Exception ) {
-			if ( $this->_Log ) {
-				$this->_Log->log(
-					Logger::notice,
-					'Error parsing HTML source',
-					array(
-						'exception' => $Exception,
-						'html' => $html
-					)
-				);
-			}
+			$this->_Logger->log(
+				Logger::notice,
+				'Error parsing HTML source',
+				array(
+					'exception' => $Exception,
+					'html' => $html
+				)
+			);
 
 			return array( );
 		}
@@ -322,8 +320,8 @@ class Essence {
 	 *
 	 *	This behavior should make it easy to integrate third party templating
 	 *	engines.
-	 *	The pattern to match urls can be configured the 'urlPattern' configuration
-	 *	option.
+	 *	The pattern to match urls can be configured using the 'urlPattern'
+	 *	configuration option.
 	 *
 	 *	Thanks to Stefano Zoffoli (https://github.com/stefanozoffoli) for his
 	 *	idea (https://github.com/felixgirault/essence/issues/4).
@@ -339,15 +337,13 @@ class Essence {
 		return preg_replace_callback(
 			$this->urlPattern,
 			function ( $matches ) use ( $callback, $options ) {
-				$Media = $this->embed( $matches['url'], $options );
-
-				if ( $Media === null ) {
-					return $matches['url'];
+				if ( $Media = $this->embed( $matches['url'], $options )) {
+					return is_callable( $callback )
+						? call_user_func( $callback, $Media )
+						: $Media->get( 'html' );
 				}
 
-				return is_callable( $callback )
-					? call_user_func( $callback, $Media )
-					: $Media->get( 'html' );
+				return $matches['url'];
 			},
 			$text
 		);
