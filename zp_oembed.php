@@ -19,6 +19,8 @@
  * This way you make sure the iframe never exceeds the content your embeded it into and also sort of responsive.
  * Sadly there is no auto height for an iframe in css so that will roughly give a 16:9 space.
  *
+ * PHP 5.4+ required.
+ *
  * @license GPL v3 
  * @author Malte Müller (acrylian)
  *
@@ -26,10 +28,10 @@
  * @subpackage misc
  */
 $plugin_is_filter = 9|THEME_PLUGIN|ADMIN_PLUGIN;
-$plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed. PHP 5.3+ required.');
+$plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed. PHP 5.4+ required.');
 $plugin_author = 'Malte Müller (acrylian)';
 $plugin_version = '1.4.5';
-$plugin_disable = (version_compare(PHP_VERSION, '5.3') >= 0) ? false : gettext('zp_oembed requires PHP 5.3 or greater.');
+$plugin_disable = (version_compare(PHP_VERSION, '5.4') >= 0) ? false : gettext('zp_oembed requires PHP 5.4 or greater.');
 $option_interface = 'zpoembed';
 
 zp_register_filter('content_macro','zpoembed::macro');
