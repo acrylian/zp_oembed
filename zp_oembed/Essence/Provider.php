@@ -46,10 +46,10 @@ abstract class Provider {
 	 *	@var array
 	 */
 
-	protected $_properties = array(
+	protected $_properties = [
 		'prepare' => 'self::prepareUrl',
 		'complete' => 'self::completeMedia'
-	);
+	];
 
 
 
@@ -75,7 +75,9 @@ abstract class Provider {
 	 *		fetched.
 	 */
 
-	public final function embed( $url, array $options = array( )) {
+	public final function embed( $url, array $options = [ ]) {
+
+		$Media = null;
 
 		if ( is_callable( $this->prepare )) {
 			$url = call_user_func( $this->prepare, $url, $options );
@@ -92,12 +94,8 @@ abstract class Provider {
 			$this->_Logger->log(
 				Logger::notice,
 				"Unable to embed $url",
-				array(
-					'exception' => $Exception
-				)
+				[ 'exception' => $Exception ]
 			);
-
-			$Media = null;
 		}
 
 		return $Media;
@@ -114,7 +112,7 @@ abstract class Provider {
 	 *	@throws Essence\Exception
 	 */
 
-	abstract protected function _embed( $url, $options );
+	abstract protected function _embed( $url, array $options );
 
 
 
@@ -126,7 +124,7 @@ abstract class Provider {
 	 *	@return string Trimmed URL.
 	 */
 
-	public static function prepareUrl( $url, array $options = array( )) {
+	public static function prepareUrl( $url, array $options = [ ]) {
 
 		return trim( $url );
 	}
@@ -141,46 +139,48 @@ abstract class Provider {
 	 *	@param array $options Embed options.
 	 */
 
-	public static function completeMedia( Media $Media, array $options = array( )) {
+	public static function completeMedia( Media $Media, array $options = [ ]) {
 
-		if ( !$Media->has( 'html' )) {
-			$title = htmlspecialchars( $Media->get( 'title', $Media->url ));
-			$description = $Media->has( 'description' )
-				? htmlspecialchars( $Media->description )
-				: $title;
+		if ( $Media->has( 'html' )) {
+			return;
+		}
 
-			switch ( $Media->type ) {
-				// builds an <img> tag pointing to the photo
-				case 'photo':
-					$Media->set( 'html', sprintf(
-						'<img src="%s" alt="%s" width="%d" height="%d" />',
-						$Media->url,
-						$description,
-						$Media->get( 'width', 500 ),
-						$Media->get( 'height', 375 )
-					));
-					break;
+		$title = htmlspecialchars( $Media->get( 'title', $Media->url ));
+		$description = $Media->has( 'description' )
+			? htmlspecialchars( $Media->description )
+			: $title;
 
-				// builds an <iframe> tag pointing to the video
-				case 'video':
-					$Media->set( 'html', sprintf(
-						'<iframe src="%s" width="%d" height="%d" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen />',
-						$Media->url,
-						$Media->get( 'width', 640 ),
-						$Media->get( 'height', 390 )
-					));
-					break;
+		switch ( $Media->type ) {
+			// builds an <img> tag pointing to the photo
+			case 'photo':
+				$Media->set( 'html', sprintf(
+					'<img src="%s" alt="%s" width="%d" height="%d" />',
+					$Media->url,
+					$description,
+					$Media->get( 'width', 500 ),
+					$Media->get( 'height', 375 )
+				));
+				break;
 
-				// builds an <a> tag pointing to the original resource
-				default:
-					$Media->set( 'html', sprintf(
-						'<a href="%s" alt="%s">%s</a>',
-						$Media->url,
-						$description,
-						$title
-					));
-					break;
-			}
+			// builds an <iframe> tag pointing to the video
+			case 'video':
+				$Media->set( 'html', sprintf(
+					'<iframe src="%s" width="%d" height="%d" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen />',
+					$Media->url,
+					$Media->get( 'width', 640 ),
+					$Media->get( 'height', 390 )
+				));
+				break;
+
+			// builds an <a> tag pointing to the original resource
+			default:
+				$Media->set( 'html', sprintf(
+					'<a href="%s" alt="%s">%s</a>',
+					$Media->url,
+					$description,
+					$title
+				));
+				break;
 		}
 	}
 }

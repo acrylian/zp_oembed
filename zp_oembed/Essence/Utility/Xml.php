@@ -31,10 +31,10 @@ class Xml {
 	public static function parse( $xml ) {
 
 		$internal = libxml_use_internal_errors( true );
-		$data = array( );
+		$data = [ ];
 
 		try {
-			$iterator = new SimpleXmlIterator( $xml, null );
+			$iterator = new SimpleXmlIterator( $xml );
 		} catch ( NativeException $Exception ) {
 			throw new Exception(
 				$Exception->getMessage( ),

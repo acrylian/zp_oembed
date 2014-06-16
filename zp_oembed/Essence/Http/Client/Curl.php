@@ -23,7 +23,7 @@ class Curl implements Client {
 	/**
 	 *	CURL handle.
 	 *
-	 *	@var Dunno LOL
+	 *	@var resource
 	 */
 
 	protected $_curl = null;
@@ -36,11 +36,11 @@ class Curl implements Client {
 	 *	@var array
 	 */
 
-	protected $_defaults = array(
+	protected $_defaults = [
 		CURLOPT_HEADER => false,
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_FOLLOWLOCATION => true
-	);
+	];
 
 
 
@@ -50,7 +50,7 @@ class Curl implements Client {
 	 *	@param array cURL options.
 	 */
 
-	public function __construct( array $options = array( )) {
+	public function __construct( array $options = [ ]) {
 
 		$this->_curl = curl_init( );
 

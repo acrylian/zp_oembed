@@ -20,7 +20,7 @@ trait Configurable {
 	/**
 	 *	An array of properties, to be defined in classes using the trait.
 	 *
-	 *	@var array( )
+	 *	@var array
 	 */
 
 	// protected $_properties = array( );
@@ -131,9 +131,7 @@ trait Configurable {
 
 	public function setDefaults( $properties ) {
 
-		foreach ( $properties as $name => $value ) {
-			$this->setDefault( $name, $value );
-		}
+		$this->_properties += $properties;
 	}
 
 

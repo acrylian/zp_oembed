@@ -49,7 +49,7 @@ class Collection {
 	 *	@var array
 	 */
 
-	protected $_properties = array( );
+	protected $_properties = [ ];
 
 
 
@@ -59,7 +59,7 @@ class Collection {
 	 *	@var array
 	 */
 
-	protected $_providers = array( );
+	protected $_providers = [ ];
 
 
 
@@ -112,7 +112,7 @@ class Collection {
 	public function hasProvider( $url ) {
 
 		foreach ( $this->_properties as $config ) {
-			if ( $this->_filter( $config['filter'], $url )) {
+			if ( $this->_matches( $config['filter'], $url )) {
 				return true;
 			}
 		}
@@ -132,10 +132,10 @@ class Collection {
 
 	public function providers( $url ) {
 
-		$providers = array( );
+		$providers = [ ];
 
 		foreach ( $this->_properties as $name => $config ) {
-			if ( $this->_filter( $config['filter'], $url )) {
+			if ( $this->_matches( $config['filter'], $url )) {
 				$providers[ ] = $this->_provider( $name, $config );
 			}
 		}
@@ -146,14 +146,14 @@ class Collection {
 
 
 	/**
-	 *	Filters the URL with the given filter.
+	 *	Tells if an URL matches a filter.
 	 *
 	 *	@param string|callable $filter Regex or callback to filter URL.
 	 *	@param string $url URL to filter.
-	 *	@return Whether the URL passes the filter or not.
+	 *	@return Whether the URL matches the filter or not.
 	 */
 
-	protected function _filter( $filter, $url ) {
+	protected function _matches( $filter, $url ) {
 
 		return is_callable( $filter )
 			? call_user_func( $filter, $url )

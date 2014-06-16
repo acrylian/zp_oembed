@@ -16,6 +16,8 @@ use Essence\Http\Client\Native as NativeHttpClient;
 use Essence\Log\Logger\Null as NullLogger;
 use Essence\Provider\Collection;
 use Essence\Provider\OEmbed;
+use Essence\Provider\OEmbed\Vimeo;
+use Essence\Provider\OEmbed\Youtube;
 use Essence\Provider\OpenGraph;
 
 
@@ -32,9 +34,9 @@ class Standard extends Container {
 	 *	Sets the default properties.
 	 */
 
-	public function __construct( ) {
+	public function __construct( array $properties = [ ]) {
 
-		$this->_properties = array(
+		$this->_properties = $properties + [
 
 			// Providers are loaded from the default config file
 			'providers' => ESSENCE_DEFAULT_PROVIDERS,
@@ -72,6 +74,26 @@ class Standard extends Container {
 				);
 			},
 
+			// The Vimeo provider uses the shared HTTP client, DOM parser
+			// and logger.
+			'Vimeo' => function( $C ) {
+				return new Vimeo(
+					$C->get( 'Http' ),
+					$C->get( 'Dom' ),
+					$C->get( 'Log' )
+				);
+			},
+
+			// The Youtube provider uses the shared HTTP client, DOM parser
+			// and logger.
+			'Youtube' => function( $C ) {
+				return new Youtube(
+					$C->get( 'Http' ),
+					$C->get( 'Dom' ),
+					$C->get( 'Log' )
+				);
+			},
+
 			// The OpenGraph provider uses the shared HTTP client, DOM parser
 			// and logger.
 			'OpenGraph' => function( $C ) {
@@ -101,6 +123,6 @@ class Standard extends Container {
 					$C->get( 'Log' )
 				);
 			}
-		);
+		];
 	}
 }
