@@ -1,7 +1,7 @@
 zp_oembed
 =========
 
-A plugin to embed content from various services via oEmbed using a content macro. 
+A [Zenphoto](http://www.zenphoto.org) plugin to embed content from various services via oEmbed using a content macro. 
 An adaption of Felix Girault's OEmbed libary Essence: https://github.com/felixgirault/essence
 
 Support for the following providers: 23hq, Bandcamp, Blip.tv, Cacoo, CanalPlus, Chirb.it, Clikthrough, CollegeHumour, 
