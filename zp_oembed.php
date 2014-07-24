@@ -1,7 +1,7 @@
 <?php
 /**
  * A plugin to embed content from various services via oEmbed using a content macro.
- * An adaption of Felix Girault's OEmbed libary Essence: https://github.com/felixgirault/essence
+ * An adaption of Felix Girault's OEmbed libary Essence: https://github.com/felixgirault/essence (FreeBSD license)
  *
  * Support for the following providers: 23hq, Bandcamp, Blip.tv, Cacoo, CanalPlus, Chirb.it, Clikthrough, CollegeHumour, 
  * Dailymotion, Deviantart, Dipity, Flickr, Funnyordie, Howcast, Huffduffer, Hulu, Ifixit, Imgur, Instagram, Mobypicture, 
@@ -21,16 +21,16 @@
  *
  * PHP 5.4+ required.
  *
- * @license GPL v3 
- * @author Malte Müller (acrylian)
- *
+ * @author Malte Müller (acrylian) <info@maltem.de>
+ * @copyright 2014 Malte Müller
+ * @license GPL v3 or later
  * @package plugins
  * @subpackage misc
  */
 $plugin_is_filter = 9|THEME_PLUGIN|ADMIN_PLUGIN;
 $plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed. PHP 5.4+ required.');
 $plugin_author = 'Malte Müller (acrylian)';
-$plugin_version = '1.4.5';
+$plugin_version = '1.0.3';
 $plugin_disable = (version_compare(PHP_VERSION, '5.4') >= 0) ? false : gettext('zp_oembed requires PHP 5.4 or greater.');
 $option_interface = 'zpoembed';
 
