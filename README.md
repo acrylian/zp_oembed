@@ -13,7 +13,7 @@ Vimeo, Yfrog and Youtube.
 
 Usage:
 --------
-Place file and folder with your `/plugins` folder and enable the plugin
+Put the file `zp_oembed.php` and the folder of the same name into your `/plugins` folder and enable it.
 
 Enter the content macro within any supported content field like this and add the url of the service to use (here: Youtube):
 
