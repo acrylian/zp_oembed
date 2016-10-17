@@ -41,8 +41,10 @@ return [
 		'endpoint' => 'http://api.bambuser.com/oembed.json?url=%s'
 	],
 	'Bandcamp' => [
-		'class' => 'OpenGraph',
-		'filter' => '#bandcamp\.com/(album|track)/#i'
+		'class' => 'Bandcamp',
+		// OpenGraph subclasses should strictly match the start of the URL
+		// to prevent spoofing.
+		'filter' => '#^https?://(?:[^\.]+\.)?bandcamp\.com/(album|track)/#i'
 	],
 	'Blip.tv' => [
 		'class' => 'OEmbed',
@@ -203,7 +205,7 @@ return [
 	],
 	'Mobypicture' => [
 		'class' => 'OEmbed',
-		'filter' => '#mobypicture\.com/user/.+/view/.+#','moby.to/.+#i',
+		'filter' => '#(moby.to|mobypicture\.com/user/.+/view)/.+#i',
 		'endpoint' => 'http://api.mobypicture.com/oEmbed?format=json&url=%s'
 	],
 	'Nfb' => [
@@ -282,7 +284,7 @@ return [
 	],
 	'SoundCloud' => [
 		'class' => 'OEmbed',
-		'filter' => '#soundcloud\.com/[a-zA-Z0-9-]+/[a-zA-Z0-9-]+#i',
+		'filter' => '#soundcloud\.com/[a-zA-Z0-9-_]+/[a-zA-Z0-9-]+#i',
 		'endpoint' => 'http://soundcloud.com/oembed?format=json&url=%s'
 	],
 	'SpeakerDeck' => [
@@ -297,7 +299,7 @@ return [
 	],
 	'TedOEmbed' => [
 		'class' => 'OEmbed',
-		'filter' => '#ted\.com/talks/*+#i',
+		'filter' => '#ted\.com/talks/.+#i',
 		'endpoint' => 'http://www.ted.com/talks/oembed.json?url=%s'
 	],
 	'TedOpenGraph' => [
@@ -306,7 +308,7 @@ return [
 	],
 	'Twitter' => [
 		'class' => 'OEmbed',
-		'filter' => '#twitter\.com/[a-zA-Z0-9_]+/status/.+#i',
+		'filter' => '#twitter\.com/[a-zA-Z0-9_]+/status(es)?/.+#i',
 		'endpoint' => 'https://api.twitter.com/1/statuses/oembed.json?url=%s'
 	],
 	'Ustream' => [
@@ -333,6 +335,17 @@ return [
 		'class' => 'Vimeo',
 		'filter' => '#vimeo\.com#i',
 		'endpoint' => 'http://vimeo.com/api/oembed.json?url=%s'
+	],
+	'Vine' => [
+		'class' => 'Vine',
+		// OpenGraph subclasses should strictly match the start of the URL
+		// to prevent spoofing.
+		'filter' => '#^https?://vine.co/v/[a-zA-Z0-9]+#i'
+	],
+	'Wistia' => [
+		'class' => 'OEmbed',
+		'filter' => '#https?://(.+)?(wistia.com|wi.st)/.*#i',
+		'endpoint' => 'http://fast.wistia.com/oembed?format=json&url=%s',
 	],
 	'WordPress' => [
 		'class' => 'OEmbed',
