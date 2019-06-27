@@ -1,46 +1,55 @@
 <?php
 /**
  * A plugin to embed content from various services via oEmbed using a content macro.
- * An adaption of Felix Girault's OEmbed libary Essence: https://github.com/felixgirault/essence (FreeBSD license)
  *
- * Support for the following providers: 23hq, Bandcamp, Blip.tv, Cacoo, CanalPlus, Chirb.it, Clikthrough, CollegeHumour, 
- * Dailymotion, Deviantart, Dipity, Flickr, Funnyordie, Howcast, Huffduffer, Hulu, Ifixit, Imgur, Instagram, Mobypicture, 
- * Official.fm, Polldaddy, Qik, Revision3, Scribd, Shoudio, Sketchfab, Slideshare, SoundCloud, Ted, Twitter, Vhx, Viddler, Vimeo, 
- * Yfrog and Youtube and more
+ * An adaption of https://github.com/oscarotero/Embed (MIT license)
  *
  * Usage:
  * Enter the macro within any supported content field like this and add the url of the service to use (here: Youtube):
  * <var>[EMBED http://www.youtube.com/watch?v=F3TP7LZ8a2w]</var>
  * On the theme the video will be directly be embeded.
  * 
- * You can also use the zpoembed class methods directly:
+ * You can also use the zpoembed class methods directly. Note that this is different than to the 1.x plugin version and not compatible anymore.
+ * 
  * <code>
- * $zpoemned = new zpoembed;
- * $embed = $zpoembed->getEmbedHTML($url);
+ * $embed = zpoembed::getEmbedCode($url);
+ * echo $embed; 
  * </code>
+ * 
+ * You can also use the library adapted directly. 
+ * 
+ * `$embedinfo = Embed\Embed::create($url);`
+ * 
+ * See the documentation on the GitHub repository linked above.
+ * 
+ * The former class constructor is obsolete and has been removed as are these former methods:
+ * 
+ * - `getEmbedHTML()`
+ * - `getReplaceEmbeds()`
+ * - `getExtractEmbeds()`
  *
  * The plugin has options to set the maxwidth/height of an embeded element. Those are for the width and height attributes of the mostly iframe. 
  * Percentage values are not possibe so this bites with responsive behaviour. Therefore your theme's css needs to be setup by adding this:
  * <code>.zpoembed > * { width: 100%; }</code>
  *
- * PHP 5.4+ required.
+ * PHP 5.5+ and cURL library required.
  *
  * @author Malte Müller (acrylian) <info@maltem.de>
- * @copyright 2014 Malte Müller
+ * @copyright 2019 Malte Müller
  * @license GPL v3 or later
  * @package plugins
  * @subpackage misc
  */
 $plugin_is_filter = 9|THEME_PLUGIN|ADMIN_PLUGIN;
-$plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed. PHP 5.4+ required.');
+$plugin_description = gettext('A plugin to embed content from various services by URL using OEmbed. PHP 5.5+ required.');
 $plugin_author = 'Malte Müller (acrylian)';
-$plugin_version = '1.0.4';
-$plugin_disable = (version_compare(PHP_VERSION, '5.4') >= 0) ? false : gettext('zp_oembed requires PHP 5.4 or greater.');
+$plugin_version = '2.0b';
+$plugin_disable = (version_compare(PHP_VERSION, '5.5') >= 0) ? false : gettext('zp_oembed requires PHP 5.5 or greater.');
 $option_interface = 'zpoembedOptions';
 
 zp_register_filter('content_macro','zpoembed::macro');
 
-require_once(SERVERPATH.'/'.USER_PLUGIN_FOLDER.'/zp_oembed/bootstrap.php');
+require_once(SERVERPATH.'/'.USER_PLUGIN_FOLDER.'/zp_oembed/autoloader.php');
 
 /**
  * zpoembed options class
@@ -52,37 +61,25 @@ class zpoembedOptions {
 	 * class instantiation function
 	 */
 	function __construct() {
-		setOptionDefault('zpoembed_maxwidth',640);
-		setOptionDefault('zpoembed_maxwidth',480);
+		purgeOption('zpoembed_maxwidth');
+			purgeOption('zpoembed_maxwidth');
 		
 	}
 	
 	function getOptionsSupported() {
-				$options = array(
-							gettext('Maxwidth of the embed') => array('key' => 'zpoembed_maxwidth', 'type' => OPTION_TYPE_TEXTBOX,
-										'order' => 0,
-										'desc' => gettext('Max width of the embed. Numbers only, any appended px etc. will cause an error. Responsive behaviour must be added by the theme css by adding .zpoembed > * { width: 100%; }.')),
-							gettext('Maxheight of the embed') => array('key' => 'zpoembed_maxheight', 'type' => OPTION_TYPE_TEXTBOX,
-										'order' => 1,
-										'desc' => gettext('Max width of the embed. Numbers only, any appended px etc. will cause an error.'))
-			);
-		return $options;
+				
 	}
 	
 	
 }
 
+use Embed\Embed;
+
 /**
  * zpoembed class
  */
 class zpoembed {
-	
-	public $essence = '';
-	
-	function __construct() {
-		$this->essence =  Essence\Essence::instance(); 
-	}
-	
+
 	/**
 	 * Internal function to provide the content macro 
 	 * 
@@ -93,7 +90,7 @@ class zpoembed {
 		$macros['EMBED'] = array(
 				'class'=>'function',
 				'params'=> array('string'),
-				'value'=>'zpoembed::getMacroEmbedHTML',
+				'value'=>'zpoembed::getEmbedCode',
 				'owner'=>'oembed',
 				'desc'=>gettext('Pass the url of the service to embed the content.')
 				);
@@ -101,71 +98,62 @@ class zpoembed {
 	}
 	
 	/**
-	 * static wrapper method for getEmbedHTML() for usage by macro()
+	 * Gets the embed HTML either as provided by an oembed provider or the basic info via e.g. OpenGraph
 	 * @param type $url
 	 * @return type
 	 */
-	static function getMacroEmbedHTML($url) {
-		$essenceobj = new zpoembed();
-		return $essenceobj->getEmbedHTML($url);
+	static function getEmbedCode($url) {
+		$embed = Embed::create($url);
+		$html = '';
+		if($embed->code) {
+			return '<div class="zpoembed">' . $html . '</div>';
+		} else {
+			//if no specific code is provided create some base default HTML if anything is available
+			$array = array(
+					'title' => $embed->title,
+					'url' => $embed->url,
+					'image' => $embed->image,
+					'description' => $embed->description
+			);
+			$html = zpoembed::buildDefaultHTML($array);
+			return $html;
+		}
 	}
 	
 	/**
-	 * Gets the omebed html for embedding by $url
+	 * Creates the default HTML to embed if there is nothing provided and fetched by the site
 	 * 
-	 * @global type $essence
-	 * @param string $url
+	 * It only creates a title and description linked to the source
+	 * 
+	 * @param array $array Array with info as fetched by Embed library:
+	 *				$array = array(
+	 *						'title' => $embed->title,
+	 *						'url' => $embed->url,
+	 *						'image' => $embed->image,
+	 *						'description' => $embed->description
+	 *				);
 	 * @return string
 	 */
-	function getEmbedHTML($url) {
-		//global $essence;
-		$maxwidth = getOption('zpoembed_maxwidth');
-		$maxheight = getOption('zpoembed_maxheight');
-		if (empty($maxwidth)) {
-			$maxwidth = 640;
+	static function buildDefaultHTML($array) {
+		$html = '';
+		/*
+		 * Image commented out as we would be literally hotlinking and this might be a large image
+		 * So if no image is defined via Omebed provider or else specifially we probably should not use it 
+		 * as it might not be wanted by the site's owner
+		 */
+		/*	
+		 * if (!empty($array['image'])) {
+			$html .= '<p><img src="' . html_encode($array['image']) . '" alt="" style="max-width: 100%; height: auto;"></p>';
+		} */
+		if (!empty($array['title'])) {
+			$html .= '<h3>' . html_encode($array['title']) . '</h3>';
 		}
-		if (empty($maxheight)) {
-			$maxheight = 480;
+		if (!empty($array['description'])) {
+			$html .= '<p>' . html_encode($array['description']) . '</p>';
 		}
-		$media = $this->essence->embed($url, array(
-				'maxwidth' => $maxwidth,
-				'maxheight' => $maxheight
-		));
-		if ($media) {
-			return '<div class="zpoembed">' . $media->html . '</div>';
+		if (!empty($html)) {
+			return '<div class="zpoembed" style="border: 1px solid lightgray; padding: 20px; margin-bottom: 20px;"><a href="' . html_encode($array['url']) . '" title="' . html_encode($array['title']) . '">' . $html . '</a></div>';
 		}
-		return NULL;
 	}
 
-	/**
-	 * 
-	 * @global type $essence
-	 * @param type $text
-	 * @return type
-	 */
-	function getReplaceEmbeds($text) {
-		$replace = $this->essence->replace($text, function($Media) {
-			return '<div class="zpoembed">'.$Media->title.'</div>';
-		});
-		if($replace) {
-			return $replace;
-		}
-		return NULL;
-	}
-	/**
-	 * Extracts 
-	 * @global type $essence
-	 * @param type $url
-	 * @return type
-	 */
-	function getExtractEmbeds($url) {
-		$urls = $this->essence->extract($url);
-		if(is_array($urls)) {
-			$media = $this->essence->embedAll($urls);
-			return $media; 
-		}
-		return NULL;
-	}
-
-} // class end
-?>
+}
