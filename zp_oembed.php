@@ -103,21 +103,21 @@ class zpoembed {
 	 * @return type
 	 */
 	static function getEmbedCode($url) {
+		/*
+		 * If there is no oembed, OpenGraph etc we don't fetch images from the source as the site owner might not have intended that.
+		 * This would literally be hotlinking after all. So without any embed code returned we do nothing
+		 */
+		$config = array( 
+			'html' => array(
+        'max_images' => 0,
+        'external_images' => false
+			)	
+		);
 		$embed = Embed::create($url);
 		$html = '';
 		if($embed->code) {
-			return '<div class="zpoembed">' . $html . '</div>';
-		} else {
-			//if no specific code is provided create some base default HTML if anything is available
-			$array = array(
-					'title' => $embed->title,
-					'url' => $embed->url,
-					'image' => $embed->image,
-					'description' => $embed->description
-			);
-			$html = zpoembed::buildDefaultHTML($array);
-			return $html;
-		}
+			return '<div class="zpoembed">' . $embed->code . '</div>';
+		} 
 	}
 	
 	/**
@@ -136,15 +136,9 @@ class zpoembed {
 	 */
 	static function buildDefaultHTML($array) {
 		$html = '';
-		/*
-		 * Image commented out as we would be literally hotlinking and this might be a large image
-		 * So if no image is defined via Omebed provider or else specifially we probably should not use it 
-		 * as it might not be wanted by the site's owner
-		 */
-		/*	
-		 * if (!empty($array['image'])) {
+		if (!empty($array['image'])) {
 			$html .= '<p><img src="' . html_encode($array['image']) . '" alt="" style="max-width: 100%; height: auto;"></p>';
-		} */
+		}
 		if (!empty($array['title'])) {
 			$html .= '<h3>' . html_encode($array['title']) . '</h3>';
 		}
